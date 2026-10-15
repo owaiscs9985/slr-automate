@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slr-automate"
+version = "0.1.0"
+description = "An open-source Python pipeline for automated systematic literature reviews"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Owais Khan", email = "owaiscs@gmail.com" }
+]
+keywords = [
+    "systematic literature review",
+    "SLR",
+    "PRISMA",
+    "research software",
+    "open science",
+    "bibliometrics",
+    "OpenAlex",
+    "Crossref",
+    "DOAJ",
+    "Europe PMC",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    "requests>=2.31.0",
+    "pandas>=2.0.0",
+    "matplotlib>=3.7.0",
+    "pyyaml>=6.0",
+    "openpyxl>=3.1.0",
+]
+
+[project.optional-dependencies]
+gui = ["streamlit>=1.30.0", "plotly>=5.18.0"]
+dev = ["pytest>=7.0.0"]
+
+[project.urls]
+Homepage = "https://github.com/owaiscs9985/slr-automate"
+Repository = "https://github.com/owaiscs9985/slr-automate"
+Issues = "https://github.com/owaiscs9985/slr-automate/issues"
+
+[project.scripts]
+slr-automate = "src.slr_automate.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

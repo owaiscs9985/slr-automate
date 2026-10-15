@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software in your research, please cite it as below."
+title: "SLR-Automate: An open-source pipeline for automated systematic literature reviews"
+version: 0.1.0
+date-released: "2026-10-15"
+license: MIT
+type: software
+authors:
+  - family-names: Khan
+    given-names: Owais
+    email: owaiscs@gmail.com
+repository-code: "https://github.com/owaiscs9985/slr-automate"
+keywords:
+  - systematic literature review
+  - PRISMA
+  - open science
+  - research software
+  - bibliometrics
+abstract: >
+  SLR-Automate is an open-source Python pipeline that automates key stages
+  of the systematic literature review workflow: structured query
+  construction, multi-source searching across open-access databases,
+  cross-source deduplication, keyword-based screening, BibTeX enrichment,
+  and PRISMA 2020 flow diagram generation.

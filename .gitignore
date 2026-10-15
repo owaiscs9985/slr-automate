@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+venv/
+.venv/
+output/
+gui_output/
+*.egg-info/
+.pytest_cache/
+.DS_Store
+write_*.py
+fix_*.py
+patch_*.py

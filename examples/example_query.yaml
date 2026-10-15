@@ -1,0 +1,56 @@
+# SLR-Automate configuration example
+#
+# Sources:
+#   - openalex       : reliable, no key, all disciplines
+#   - crossref       : reliable, no key, all disciplines
+#   - doaj           : reliable, no key, open-access journals only
+#   - europepmc      : reliable, no key, life sciences focus
+#   - semantic_scholar: intermittent without API key; provide api_key for reliability
+#   - arxiv          : aggressively rate-limited; space runs 15+ min apart
+#
+# Output: each run creates a timestamped folder under output_dir (unless use_timestamp: false)
+# Abstract column: truncated to abstract_max_chars (0 = keep full abstract)
+
+concepts:
+  reinforcement learning:
+    - RL
+    - Q-learning
+    - deep reinforcement learning
+  MAC protocol:
+    - medium access control
+    - MAC layer
+  wireless sensor network:
+    - WSN
+    - sensor network
+
+from_year: 2018
+to_year: 2024
+
+max_per_source: 50
+sources:
+  - openalex
+  - crossref
+  - doaj
+  - europepmc
+  - semantic_scholar
+  - arxiv
+output_dir: output
+use_timestamp: true
+
+abstract_max_chars: 300
+
+include_keywords:
+  - reinforcement learning
+  - MAC protocol
+  - wireless sensor network
+  - WSN
+  - duty cycle
+  - energy efficiency
+  - medium access control
+
+exclude_keywords:
+  - editorial
+  - erratum
+  - retraction
+
+min_include_matches: 2
