@@ -13,6 +13,25 @@ from src.slr_automate.query_builder import build_canonical_query
 from src.slr_automate import dashboard as dash
 
 
+def find_latest_run(parent_dir):
+    p = Path(parent_dir)
+    if not p.exists():
+        return None
+    subdirs = [d for d in p.iterdir() if d.is_dir()]
+    if subdirs:
+        return sorted(subdirs, key=lambda d: d.name)[-1]
+    return p
+
+
+def list_runs(parent_dir):
+    p = Path(parent_dir)
+    if not p.exists():
+        return []
+    return sorted([d for d in p.iterdir() if d.is_dir()],
+                  key=lambda d: d.name, reverse=True)
+
+
+
 st.set_page_config(page_title="SLR-Automate", layout="wide")
 
 st.title("SLR-Automate")
@@ -28,8 +47,11 @@ with tab_pipeline:
     st.sidebar.header("Sources")
     use_openalex = st.sidebar.checkbox("OpenAlex", value=True)
     use_crossref = st.sidebar.checkbox("Crossref", value=True)
+    use_doaj = st.sidebar.checkbox("DOAJ", value=True)
+    use_europepmc = st.sidebar.checkbox("Europe PMC", value=True)
     use_s2 = st.sidebar.checkbox("Semantic Scholar", value=False)
     use_arxiv = st.sidebar.checkbox("arXiv", value=True)
+    contact_email = st.sidebar.text_input("Contact email (OpenAlex/Crossref polite pool)", value="")
     s2_key = st.sidebar.text_input("Semantic Scholar API key (optional)", type="password")
 
     st.sidebar.header("Retrieval")
@@ -117,6 +139,10 @@ with tab_pipeline:
                 sources.append("openalex")
             if use_crossref:
                 sources.append("crossref")
+            if use_doaj:
+                sources.append("doaj")
+            if use_europepmc:
+                sources.append("europepmc")
             if use_s2:
                 sources.append("semantic_scholar")
             if use_arxiv:
@@ -162,7 +188,15 @@ with tab_pipeline:
 with tab_dashboard:
     st.header("Descriptive analysis")
 
-    dash_dir = st.text_input("Results folder for dashboard", value="gui_output", key="dash_dir")
+    dash_parent = st.text_input("Results parent folder", value="gui_output", key="dash_dir")
+
+    runs = list_runs(dash_parent)
+    if runs:
+        run_labels = [r.name for r in runs]
+        chosen_label = st.selectbox("Select run to visualize", run_labels, index=0, key="dash_run")
+        dash_dir = str(runs[run_labels.index(chosen_label)])
+    else:
+        dash_dir = dash_parent
 
     df_all = dash.load_results(str(Path(dash_dir) / "results_all.csv"))
     df_inc = dash.load_results(str(Path(dash_dir) / "results_included.csv"))
@@ -191,29 +225,29 @@ with tab_dashboard:
             with r1c1:
                 fig = dash.chart_papers_per_year(df)
                 if fig:
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width="stretch")
             with r1c2:
                 fig = dash.chart_papers_per_source(df)
                 if fig:
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width="stretch")
 
             fig = dash.chart_year_source_heatmap(df)
             if fig:
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
 
             r2c1, r2c2 = st.columns(2)
             with r2c1:
                 fig = dash.chart_top_venues(df, 10)
                 if fig:
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width="stretch")
             with r2c2:
                 fig = dash.chart_top_authors(df, 10)
                 if fig:
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width="stretch")
 
             fig = dash.chart_keyword_frequency(df, 20)
             if fig:
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
 
 
 # ============================================================
@@ -221,7 +255,16 @@ with tab_dashboard:
 # ============================================================
 with tab_results:
     st.header("Results table")
-    res_dir = st.text_input("Results folder", value="gui_output", key="res_dir")
+    res_parent = st.text_input("Results parent folder", value="gui_output", key="res_dir")
+
+    res_runs = list_runs(res_parent)
+    if res_runs:
+        run_labels_r = [r.name for r in res_runs]
+        chosen_label_r = st.selectbox("Select run", run_labels_r, index=0, key="res_run")
+        res_dir = str(res_runs[run_labels_r.index(chosen_label_r)])
+    else:
+        res_dir = res_parent
+
     res_file = st.radio("Show", ["Included only", "All deduplicated"], horizontal=True, key="res_which")
 
     filename = "results_included.csv" if res_file == "Included only" else "results_all.csv"
@@ -240,7 +283,7 @@ with tab_results:
             st.write("Filtered rows: " + str(len(df)))
 
         cols_to_show = [c for c in ["title", "authors", "year", "source", "venue", "doi"] if c in df.columns]
-        st.dataframe(df[cols_to_show], use_container_width=True, height=500)
+        st.dataframe(df[cols_to_show], width="stretch", height=500)
 
         st.subheader("Downloads")
         dl1, dl2 = st.columns(2)
@@ -258,4 +301,4 @@ with tab_results:
         prisma_path = Path(res_dir) / "prisma_flow.png"
         if prisma_path.exists():
             st.subheader("PRISMA diagram")
-            st.image(str(prisma_path), use_container_width=True)
+            st.image(str(prisma_path), width="stretch")

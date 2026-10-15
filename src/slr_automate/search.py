@@ -78,20 +78,23 @@ def _get_with_retry(url, params, headers=None, max_retries=3, base_delay=5):
     return None
 
 
-def search_openalex(query, max_results=100, mailto="researcher@example.com", extra_params=None):
+def search_openalex(query, max_results=100, mailto=None, extra_params=None):
     base_url = "https://api.openalex.org/works"
     papers = []
     per_page = 50
     cursor = "*"
     extra_params = extra_params or {}
 
+    use_mailto = mailto if (mailto and "example.com" not in mailto) else None
+
     while len(papers) < max_results:
         params = {
             "search": query,
             "per-page": min(per_page, max_results - len(papers)),
             "cursor": cursor,
-            "mailto": mailto,
         }
+        if use_mailto:
+            params["mailto"] = use_mailto
         if extra_params.get("filter"):
             params["filter"] = extra_params["filter"]
 
@@ -255,7 +258,7 @@ def search_arxiv(query, max_results=100, extra_params=None):
     return papers[:max_results]
 
 
-def search_crossref(query, max_results=100, mailto="researcher@example.com", extra_params=None):
+def search_crossref(query, max_results=100, mailto=None, extra_params=None):
     base_url = "https://api.crossref.org/works"
     papers = []
     rows = 50
@@ -263,13 +266,16 @@ def search_crossref(query, max_results=100, mailto="researcher@example.com", ext
     headers = {"User-Agent": USER_AGENT}
     extra_params = extra_params or {}
 
+    use_mailto = mailto if (mailto and "example.com" not in mailto) else None
+
     while len(papers) < max_results:
         params = {
             "query": query,
             "rows": min(rows, max_results - len(papers)),
             "offset": offset,
-            "mailto": mailto,
         }
+        if use_mailto:
+            params["mailto"] = use_mailto
         if extra_params.get("from-pub-date"):
             params["filter"] = "from-pub-date:" + extra_params["from-pub-date"]
         if extra_params.get("until-pub-date"):

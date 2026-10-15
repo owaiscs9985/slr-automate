@@ -10,3 +10,7 @@ gui_output/
 write_*.py
 fix_*.py
 patch_*.py
+
+# Local configs and outputs
+examples/my_query.yaml
+output_local/

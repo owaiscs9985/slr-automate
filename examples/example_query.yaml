@@ -35,6 +35,9 @@ sources:
   - semantic_scholar
   - arxiv
 output_dir: output
+# Optional: your email for OpenAlex/Crossref polite pools
+# Set this to your own address when using the tool yourself.
+contact_email: owaiscs@gmail.com
 use_timestamp: true
 
 abstract_max_chars: 300

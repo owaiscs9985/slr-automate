@@ -58,6 +58,7 @@ def run(config_path):
     from_year = cfg.get("from_year")
     to_year = cfg.get("to_year")
     abstract_max_chars = cfg.get("abstract_max_chars", 300)
+    contact_email = cfg.get("contact_email", "slr-automate@example.com")
     out_dir.mkdir(parents=True, exist_ok=True)
     print("Output directory: " + str(out_dir))
     print("")
@@ -72,14 +73,14 @@ def run(config_path):
     if "openalex" in sources:
         print("Searching OpenAlex...")
         q, params = adapt_for_source(canonical_query, plain_query, "openalex", from_year, to_year)
-        oa = search_openalex(q, max_per_source, extra_params=params)
+        oa = search_openalex(q, max_per_source, mailto=contact_email, extra_params=params)
         per_source_counts["OpenAlex"] = len(oa)
         all_papers.extend(oa)
 
     if "crossref" in sources:
         print("Searching Crossref...")
         q, params = adapt_for_source(canonical_query, plain_query, "crossref", from_year, to_year)
-        cr = search_crossref(q, max_per_source, extra_params=params)
+        cr = search_crossref(q, max_per_source, mailto=contact_email, extra_params=params)
         per_source_counts["Crossref"] = len(cr)
         all_papers.extend(cr)
 
